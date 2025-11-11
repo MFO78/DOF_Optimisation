@@ -38,6 +38,10 @@
             color: var(--text-primary);
         }
 
+        body.modal-open {
+            overflow: hidden;
+        }
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -136,10 +140,27 @@
             transform: translateY(-2px);
         }
 
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #d97706;
+            transform: translateY(-2px);
+        }
+
         .btn:disabled {
             background: var(--text-secondary);
             cursor: not-allowed;
             transform: none;
+        }
+
+        .btn-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 0.5rem;
+            margin-top: 0.5rem;
         }
 
         .dof-config {
@@ -295,6 +316,140 @@
             margin-top: 1rem;
         }
 
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 1rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            animation: slideUp 0.3s ease;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .modal-close {
+            background: var(--bg-light);
+            border: none;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            transition: all 0.3s;
+        }
+
+        .modal-close:hover {
+            background: var(--danger);
+            color: white;
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            color: var(--text-primary);
+            line-height: 1.8;
+        }
+
+        .modal-body h3 {
+            color: var(--primary);
+            font-size: 1.1rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .modal-body h3:first-child {
+            margin-top: 0;
+        }
+
+        .modal-body p {
+            margin-bottom: 1rem;
+        }
+
+        .modal-body ul {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .modal-body li {
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-body code {
+            background: var(--bg-light);
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.25rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        .highlight-box {
+            background: var(--bg-light);
+            border-left: 4px solid var(--primary);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0.5rem;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         @media (max-width: 768px) {
             .chart-container {
                 height: 300px;
@@ -302,6 +457,15 @@
             
             .charts-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                padding: 1.5rem;
+                margin: 1rem;
+            }
+
+            .modal-title {
+                font-size: 1.25rem;
             }
         }
 
@@ -320,6 +484,14 @@
 
             .input-group {
                 grid-template-columns: 1fr;
+            }
+
+            .btn-group {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                padding: 1rem;
             }
         }
 
@@ -360,6 +532,12 @@
             <button class="btn btn-primary" onclick="startOptimization()">
                 🚀 Start Optimization
             </button>
+
+            <div style="margin-top: 1rem;">
+                <button class="btn btn-warning" onclick="openAlgorithmModal()">
+                    📚 About the Algorithm
+                </button>
+            </div>
         </div>
 
         <!-- Optimization Phase -->
@@ -428,9 +606,17 @@
                     ✅ Submit Observation
                 </button>
 
-                <button class="btn btn-primary" onclick="resetOptimization()" style="margin-top: 0.5rem;">
-                    🔄 Start Over
-                </button>
+                <div class="btn-group">
+                    <button class="btn btn-warning" onclick="downloadCSV()">
+                        💾 Download CSV
+                    </button>
+                    <button class="btn btn-primary" onclick="openAlgorithmModal()">
+                        📚 About Algorithm
+                    </button>
+                    <button class="btn btn-primary" onclick="resetOptimization()">
+                        🔄 Start Over
+                    </button>
+                </div>
             </div>
 
             <!-- History -->
@@ -452,520 +638,90 @@
         </div>
     </div>
 
-<script>
-    // Global state
-    let state = {
-        numDOF: 0,
-        dofNames: [],
-        dofMins: [],
-        dofMaxs: [],
-        dofCurrents: [],
-        targetValue: 0,
-        optimGoal: 'target',
-        observations: [],
-        iteration: 0,
-        bestOutput: null,
-        bestConfig: null,
-        converged: false,
-        chartData: {
-            iterations: [],
-            outputs: [],
-            distances: [],
-            bestValues: []
-        },
-        chartsInitialized: false
-    };
+    <!-- Algorithm Explanation Modal -->
+    <div id="algorithmModal" class="modal-overlay" onclick="closeModalOnOverlay(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2 class="modal-title">
+                    <span class="emoji">🧠</span> Bayesian Optimization Algorithm
+                </h2>
+                <button class="modal-close" onclick="closeAlgorithmModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <h3>📌 Overview</h3>
+                <p>This application implements <strong>Bayesian Optimization</strong>, a state-of-the-art sequential optimization algorithm designed for expensive black-box functions. It's ideal when each evaluation is costly, time-consuming, or requires manual intervention.</p>
 
-    // Initialize DOF input fields
-    document.getElementById('numDOF').addEventListener('change', function() {
-        const numDOF = parseInt(this.value);
-        const container = document.getElementById('dofContainer');
-        container.innerHTML = '';
-
-        for (let i = 0; i < numDOF; i++) {
-            const div = document.createElement('div');
-            div.className = 'dof-config';
-            div.innerHTML = `
-                <div class="dof-header">DOF ${i + 1}</div>
-                <div class="input-group">
-                    <div>
-                        <label>Name</label>
-                        <input type="text" id="dof_name_${i}" value="Parameter ${i + 1}">
-                    </div>
-                    <div>
-                        <label>Min Value</label>
-                        <input type="number" id="dof_min_${i}" step="any" value="0">
-                    </div>
-                    <div>
-                        <label>Max Value</label>
-                        <input type="number" id="dof_max_${i}" step="any" value="100">
-                    </div>
+                <div class="highlight-box">
+                    <strong>Key Advantage:</strong> Bayesian Optimization typically requires 10-100× fewer evaluations than grid search or random sampling to find optimal settings.
                 </div>
-            `;
-            container.appendChild(div);
-        }
-    });
 
-    // Trigger initial load
-    document.getElementById('numDOF').dispatchEvent(new Event('change'));
-
-    function initializePlots() {
-        // Convergence Plot - All observations
-        const convergenceTrace = {
-            x: [],
-            y: [],
-            mode: 'lines+markers',
-            name: 'Output',
-            line: { color: '#667eea', width: 2 },
-            marker: { size: 8, color: '#667eea' }
-        };
-
-        const targetTrace = {
-            x: [1],
-            y: [state.targetValue],
-            mode: 'lines',
-            name: 'Target',
-            line: { color: '#ef4444', width: 2, dash: 'dash' }
-        };
-
-        const convergenceLayout = {
-            title: { text: 'Output vs Iteration', font: { size: 16, color: '#1e293b' }},
-            xaxis: { title: 'Iteration', gridcolor: '#e2e8f0' },
-            yaxis: { title: 'Output Value', gridcolor: '#e2e8f0' },
-            plot_bgcolor: '#f8fafc',
-            paper_bgcolor: 'white',
-            margin: { l: 50, r: 30, t: 50, b: 50 },
-            showlegend: true,
-            legend: { x: 1, xanchor: 'right', y: 1 }
-        };
-
-        const config = {
-            responsive: true,
-            displayModeBar: true,
-            modeBarButtonsToRemove: ['lasso2d', 'select2d'],
-            displaylogo: false
-        };
-
-        Plotly.newPlot('convergencePlot', [convergenceTrace, targetTrace], convergenceLayout, config);
-
-        // Distance Plot
-        const distanceTrace = {
-            x: [],
-            y: [],
-            mode: 'lines+markers',
-            name: 'Distance from Target',
-            line: { color: '#f59e0b', width: 2 },
-            marker: { size: 8, color: '#f59e0b' },
-            fill: 'tozeroy',
-            fillcolor: 'rgba(245, 158, 11, 0.2)'
-        };
-
-        const distanceLayout = {
-            title: { text: 'Distance from Target', font: { size: 16, color: '#1e293b' }},
-            xaxis: { title: 'Iteration', gridcolor: '#e2e8f0' },
-            yaxis: { title: 'Absolute Distance', gridcolor: '#e2e8f0' },
-            plot_bgcolor: '#f8fafc',
-            paper_bgcolor: 'white',
-            margin: { l: 50, r: 30, t: 50, b: 50 }
-        };
-
-        Plotly.newPlot('distancePlot', [distanceTrace], distanceLayout, config);
-
-        // Best Evolution Plot
-        const bestTrace = {
-            x: [],
-            y: [],
-            mode: 'lines+markers',
-            name: 'Best Output',
-            line: { color: '#10b981', width: 3 },
-            marker: { size: 10, color: '#10b981', symbol: 'star' }
-        };
-
-        const bestLayout = {
-            title: { text: 'Best Output Evolution', font: { size: 16, color: '#1e293b' }},
-            xaxis: { title: 'Iteration', gridcolor: '#e2e8f0' },
-            yaxis: { title: 'Best Output Value', gridcolor: '#e2e8f0' },
-            plot_bgcolor: '#f8fafc',
-            paper_bgcolor: 'white',
-            margin: { l: 50, r: 30, t: 50, b: 50 }
-        };
-
-        Plotly.newPlot('bestEvolutionPlot', [bestTrace], bestLayout, config);
-        
-        state.chartsInitialized = true;
-    }
-
-    function updatePlots() {
-        if (!state.chartsInitialized) return;
-
-        // Update Convergence Plot - trace 0 is output, trace 1 is target line
-        Plotly.restyle('convergencePlot', {
-            x: [state.chartData.iterations],
-            y: [state.chartData.outputs]
-        }, [0]);
-
-        // Update target line to span the full x-axis
-        if (state.chartData.iterations.length > 0) {
-            const minIter = Math.min(...state.chartData.iterations);
-            const maxIter = Math.max(...state.chartData.iterations);
-            Plotly.restyle('convergencePlot', {
-                x: [[minIter, maxIter]],
-                y: [[state.targetValue, state.targetValue]]
-            }, [1]);
-        }
-
-        // Update Distance Plot
-        Plotly.restyle('distancePlot', {
-            x: [state.chartData.iterations],
-            y: [state.chartData.distances]
-        }, [0]);
-
-        // Update Best Evolution Plot
-        Plotly.restyle('bestEvolutionPlot', {
-            x: [state.chartData.iterations],
-            y: [state.chartData.bestValues]
-        }, [0]);
-    }
-
-    function startOptimization() {
-        const numDOF = parseInt(document.getElementById('numDOF').value);
-        state.numDOF = numDOF;
-        state.targetValue = parseFloat(document.getElementById('targetValue').value);
-        state.optimGoal = document.getElementById('optimGoal').value;
-        state.observations = [];
-        state.iteration = 0;
-        state.converged = false;
-        state.bestOutput = null;
-        state.bestConfig = null;
-        state.chartData = {
-            iterations: [],
-            outputs: [],
-            distances: [],
-            bestValues: []
-        };
-
-        // Collect DOF configuration
-        for (let i = 0; i < numDOF; i++) {
-            state.dofNames[i] = document.getElementById(`dof_name_${i}`).value;
-            state.dofMins[i] = parseFloat(document.getElementById(`dof_min_${i}`).value);
-            state.dofMaxs[i] = parseFloat(document.getElementById(`dof_max_${i}`).value);
-            state.dofCurrents[i] = (state.dofMins[i] + state.dofMaxs[i]) / 2;
-        }
-
-        // Switch to optimization phase
-        document.getElementById('setupPhase').classList.add('hidden');
-        document.getElementById('optimizationPhase').classList.remove('hidden');
-        document.getElementById('targetDisplay').textContent = state.targetValue.toFixed(2);
-
-        // Initialize plots
-        initializePlots();
-
-        // Generate initial recommendation
-        generateRecommendation();
-    }
-
-    function generateRecommendation() {
-        if (state.observations.length === 0) {
-            let recText = `<strong>Initial Exploration (Iteration 1)</strong><br><br>`;
-            recText += `Set all DOFs to their midpoint values and measure the output:<br>`;
-            for (let i = 0; i < state.numDOF; i++) {
-                const midpoint = (state.dofMins[i] + state.dofMaxs[i]) / 2;
-                state.dofCurrents[i] = midpoint;
-                recText += `<div class="recommendation-value">📌 ${state.dofNames[i]}: ${midpoint.toFixed(2)}</div>`;
-            }
-            document.getElementById('recommendation').innerHTML = recText;
-        } else if (state.observations.length < state.numDOF + 2) {
-            const config = generateExplorationPoint(state.observations.length);
-            let recText = `<strong>Exploration Phase (Iteration ${state.iteration + 1})</strong><br><br>`;
-            recText += `Try this configuration to explore the parameter space:<br>`;
-            for (let i = 0; i < state.numDOF; i++) {
-                state.dofCurrents[i] = config[i];
-                recText += `<div class="recommendation-value">📌 ${state.dofNames[i]}: ${config[i].toFixed(2)}</div>`;
-            }
-            document.getElementById('recommendation').innerHTML = recText;
-        } else {
-            const nextConfig = optimizeAcquisition();
-            let recText = `<strong>Optimization Phase (Iteration ${state.iteration + 1})</strong><br><br>`;
-            
-            let maxChange = 0;
-            let maxChangeDOF = 0;
-            for (let i = 0; i < state.numDOF; i++) {
-                const change = Math.abs(nextConfig[i] - state.dofCurrents[i]);
-                if (change > maxChange) {
-                    maxChange = change;
-                    maxChangeDOF = i;
-                }
-            }
-
-            const direction = nextConfig[maxChangeDOF] > state.dofCurrents[maxChangeDOF] ? 'INCREASE' : 'DECREASE';
-            const changeAmount = Math.abs(nextConfig[maxChangeDOF] - state.dofCurrents[maxChangeDOF]);
-
-            recText += `<strong>Primary Action:</strong> ${direction} <strong>${state.dofNames[maxChangeDOF]}</strong><br>`;
-            recText += `<div class="recommendation-value">🎯 Change from ${state.dofCurrents[maxChangeDOF].toFixed(2)} → ${nextConfig[maxChangeDOF].toFixed(2)} (${direction === 'INCREASE' ? '+' : '-'}${changeAmount.toFixed(2)})</div>`;
-            
-            recText += `<br><strong>All Recommended Settings:</strong><br>`;
-            for (let i = 0; i < state.numDOF; i++) {
-                state.dofCurrents[i] = nextConfig[i];
-                const indicator = i === maxChangeDOF ? '🔥 ' : '📌 ';
-                recText += `<div class="recommendation-value">${indicator}${state.dofNames[i]}: ${nextConfig[i].toFixed(2)}</div>`;
-            }
-
-            document.getElementById('recommendation').innerHTML = recText;
-        }
-    }
-
-    function generateExplorationPoint(index) {
-        const config = [];
-        const seed = index * 2.5;
-        for (let i = 0; i < state.numDOF; i++) {
-            const fraction = ((seed + i * 1.618033988749895) % 1);
-            config[i] = state.dofMins[i] + fraction * (state.dofMaxs[i] - state.dofMins[i]);
-        }
-        return config;
-    }
-
-    function optimizeAcquisition() {
-        const candidates = [];
-        const numCandidates = 100;
-
-        for (let c = 0; c < numCandidates; c++) {
-            const candidate = [];
-            for (let i = 0; i < state.numDOF; i++) {
-                candidate[i] = state.dofMins[i] + Math.random() * (state.dofMaxs[i] - state.dofMins[i]);
-            }
-            candidates.push(candidate);
-        }
-
-        let bestCandidate = null;
-        let bestEI = -Infinity;
-
-        for (const candidate of candidates) {
-            const [mean, variance] = predictGP(candidate);
-            const ei = expectedImprovement(mean, variance);
-            if (ei > bestEI) {
-                bestEI = ei;
-                bestCandidate = candidate;
-            }
-        }
-
-        return bestCandidate || state.dofCurrents;
-    }
-
-    function predictGP(x) {
-        const k = Math.min(5, state.observations.length);
-        const distances = [];
-
-        for (const obs of state.observations) {
-            let dist = 0;
-            for (let i = 0; i < state.numDOF; i++) {
-                const normalized_diff = (x[i] - obs.config[i]) / (state.dofMaxs[i] - state.dofMins[i]);
-                dist += normalized_diff * normalized_diff;
-            }
-            distances.push({dist: Math.sqrt(dist), output: obs.output});
-        }
-
-        distances.sort((a, b) => a.dist - b.dist);
-        const kNearest = distances.slice(0, k);
-
-        let weightSum = 0;
-        let mean = 0;
-        const lengthScale = 0.3;
-
-        for (const neighbor of kNearest) {
-            const weight = Math.exp(-neighbor.dist * neighbor.dist / (2 * lengthScale * lengthScale));
-            mean += weight * neighbor.output;
-            weightSum += weight;
-        }
-
-        mean = weightSum > 0 ? mean / weightSum : 0;
-
-        const minDist = distances[0].dist;
-        const variance = Math.max(0.1, minDist * 10);
-
-        return [mean, variance];
-    }
-
-    function expectedImprovement(mean, variance) {
-        if (state.bestOutput === null) return variance;
-
-        const std = Math.sqrt(variance);
-        if (std < 1e-6) return 0;
-
-        let improvement;
-        if (state.optimGoal === 'minimize') {
-            improvement = state.bestOutput - mean;
-        } else if (state.optimGoal === 'maximize') {
-            improvement = mean - state.bestOutput;
-        } else {
-            const currentDist = Math.abs(state.bestOutput - state.targetValue);
-            const predictedDist = Math.abs(mean - state.targetValue);
-            improvement = currentDist - predictedDist;
-        }
-
-        const z = improvement / std;
-        const ei = improvement * normalCDF(z) + std * normalPDF(z);
-        return ei;
-    }
-
-    function normalPDF(x) {
-        return Math.exp(-0.5 * x * x) / Math.sqrt(2 * Math.PI);
-    }
-
-    function normalCDF(x) {
-        return 0.5 * (1 + erf(x / Math.sqrt(2)));
-    }
-
-    function erf(x) {
-        const sign = x >= 0 ? 1 : -1;
-        x = Math.abs(x);
-        const a1 = 0.254829592;
-        const a2 = -0.284496736;
-        const a3 = 1.421413741;
-        const a4 = -1.453152027;
-        const a5 = 1.061405429;
-        const p = 0.3275911;
-        const t = 1.0 / (1.0 + p * x);
-        const y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-x * x);
-        return sign * y;
-    }
-
-    function submitObservation() {
-        const output = parseFloat(document.getElementById('observedOutput').value);
-        if (isNaN(output)) {
-            alert('Please enter a valid output value');
-            return;
-        }
-
-        state.iteration++;
-
-        const observation = {
-            iteration: state.iteration,
-            config: [...state.dofCurrents],
-            output: output
-        };
-        state.observations.push(observation);
-
-        // Update chart data arrays
-        state.chartData.iterations.push(state.iteration);
-        state.chartData.outputs.push(output);
-        state.chartData.distances.push(Math.abs(output - state.targetValue));
-
-        const isBest = updateBest(output);
-        
-        // Update best values array - always push current best
-        state.chartData.bestValues.push(state.bestOutput);
-
-        // Update UI and plots
-        updateProgress();
-        updatePlots();
-        addHistoryItem(observation, isBest);
-
-        document.getElementById('observedOutput').value = '';
-
-        if (checkConvergence()) {
-            state.converged = true;
-            document.getElementById('convergedAlert').classList.remove('hidden');
-            document.getElementById('recommendation').innerHTML = 
-                `<strong>✅ Optimization Complete!</strong><br><br>The algorithm has converged to the optimal solution.`;
-        } else {
-            generateRecommendation();
-        }
-    }
-
-    function updateBest(output) {
-        let isBest = false;
-        
-        if (state.bestOutput === null) {
-            state.bestOutput = output;
-            state.bestConfig = [...state.dofCurrents];
-            isBest = true;
-        } else {
-            const currentDist = Math.abs(state.bestOutput - state.targetValue);
-            const newDist = Math.abs(output - state.targetValue);
-            
-            if (state.optimGoal === 'minimize' && output < state.bestOutput) {
-                state.bestOutput = output;
-                state.bestConfig = [...state.dofCurrents];
-                isBest = true;
-            } else if (state.optimGoal === 'maximize' && output > state.bestOutput) {
-                state.bestOutput = output;
-                state.bestConfig = [...state.dofCurrents];
-                isBest = true;
-            } else if (state.optimGoal === 'target' && newDist < currentDist) {
-                state.bestOutput = output;
-                state.bestConfig = [...state.dofCurrents];
-                isBest = true;
-            }
-        }
-
-        return isBest;
-    }
-
-    function updateProgress() {
-        document.getElementById('iterationCount').textContent = state.iteration;
-        document.getElementById('bestOutput').textContent = state.bestOutput !== null ? 
-            state.bestOutput.toFixed(2) : '-';
-
-        const distance = state.bestOutput !== null ? 
-            Math.abs(state.bestOutput - state.targetValue) : 0;
-        document.getElementById('distanceMetric').textContent = distance.toFixed(2);
-
-        const maxDistance = Math.max(
-            Math.abs(state.targetValue - Math.min(...state.dofMins)),
-            Math.abs(state.targetValue - Math.max(...state.dofMaxs))
-        );
-        const progress = Math.max(0, Math.min(100, (1 - distance / maxDistance) * 100));
-        
-        document.getElementById('progressBar').style.width = progress + '%';
-        document.getElementById('progressBar').textContent = progress.toFixed(0) + '%';
-    }
-
-    function addHistoryItem(obs, isBest) {
-        const container = document.getElementById('historyContainer');
-        const item = document.createElement('div');
-        item.className = 'history-item';
-
-        let configText = '';
-        for (let i = 0; i < state.numDOF; i++) {
-            configText += `<strong>${state.dofNames[i]}:</strong> ${obs.config[i].toFixed(2)}`;
-            if (i < state.numDOF - 1) configText += ' | ';
-        }
-
-        const distance = Math.abs(obs.output - state.targetValue).toFixed(2);
-
-        item.innerHTML = `
-            <div class="history-header">
-                <span class="badge badge-iteration">Iteration ${obs.iteration}</span>
-                ${isBest ? '<span class="badge badge-best">🏆 Best</span>' : ''}
+                <h3>🔬 How It Works</h3>
+                <p>The algorithm operates in three main phases:</p>
+
+                <p><strong>1. Gaussian Process (GP) Surrogate Model</strong></p>
+                <p>A probabilistic model that learns the relationship between your DOF settings and outputs. For any untested configuration, the GP predicts both:</p>
+                <ul>
+                    <li><strong>Expected output</strong> (mean prediction)</li>
+                    <li><strong>Uncertainty</strong> (variance/confidence)</li>
+                </ul>
+                <p>The implementation uses k-nearest neighbor approximation with RBF kernel weighting for computational efficiency.</p>
+
+                <p><strong>2. Expected Improvement (EI) Acquisition Function</strong></p>
+                <p>Intelligently selects the next experiment by balancing:</p>
+                <ul>
+                    <li><strong>Exploitation:</strong> Testing points predicted to be better than current best</li>
+                    <li><strong>Exploration:</strong> Testing uncertain regions where predictions might be inaccurate</li>
+                </ul>
+                <p>The algorithm computes EI for 100 candidate configurations and recommends the one with highest expected improvement.</p>
+
+                <p><strong>3. Sequential Learning Process</strong></p>
+                <p>Each iteration follows this cycle:</p>
+                <ul>
+                    <li>Update GP model with all observations</li>
+                    <li>Optimize acquisition function to find next best point</li>
+                    <li>Recommend DOF settings to user</li>
+                    <li>User adjusts system and measures output</li>
+                    <li>Algorithm incorporates new data and repeats</li>
+                </ul>
+
+                <h3>📊 Optimization Phases</h3>
+                <p><strong>Exploration Phase (First few iterations):</strong> Uses quasi-random sampling to gather diverse observations across the parameter space, helping the GP understand global structure.</p>
+
+                <p><strong>Exploitation Phase (Later iterations):</strong> Focuses on promising regions identified by the GP, rapidly converging to optimal settings.</p>
+
+                <h3>🎯 Convergence Criteria</h3>
+                <p>The algorithm declares convergence when:</p>
+                <ul>
+                    <li>Minimum 10 iterations completed</li>
+                    <li>Improvement over last 5 iterations &lt; 1% of target value</li>
+                    <li>This indicates the algorithm has found a local optimum</li>
+                </ul>
+
+                <h3>💡 Why This Algorithm?</h3>
+                <ul>
+                    <li><strong>Sample Efficient:</strong> Requires far fewer evaluations than alternatives</li>
+                    <li><strong>No Gradients Needed:</strong> Works with function values alone</li>
+                    <li><strong>Handles Noise:</strong> Naturally accounts for measurement uncertainty</li>
+                    <li><strong>Adaptive Strategy:</strong> Automatically adjusts exploration vs exploitation</li>
+                    <li><strong>Global Optimization:</strong> Not easily trapped in poor local optima</li>
+                </ul>
+
+                <h3>📚 Technical Details</h3>
+                <p><strong>Kernel:</strong> Radial Basis Function (RBF) with length scale ℓ = 0.3</p>
+                <p><strong>Approximation:</strong> k-Nearest Neighbors (k=5) for scalability</p>
+                <p><strong>Acquisition:</strong> Expected Improvement with analytical formula</p>
+                <p><strong>Normalization:</strong> All DOF values normalized by their bounds for fair comparison</p>
+
+                <div class="highlight-box">
+                    <strong>💡 Pro Tip:</strong> For best results, define realistic DOF bounds that encompass the feasible range. Tighter bounds lead to faster convergence.
+                </div>
             </div>
-            <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
-                ${configText}
-            </div>
-            <div style="font-weight: 600;">
-                Output: ${obs.output.toFixed(2)} | Distance from Target: ${distance}
-            </div>
-        `;
+        </div>
+    </div>
 
-        container.insertBefore(item, container.firstChild);
-    }
-
-    function checkConvergence() {
-        if (state.observations.length < 10) return false;
-
-        const recent = state.observations.slice(-5);
-        const outputs = recent.map(o => Math.abs(o.output - state.targetValue));
-        const improvement = outputs[0] - outputs[outputs.length - 1];
-
-        return Math.abs(improvement) < 0.01 * Math.abs(state.targetValue);
-    }
-
-    function resetOptimization() {
-        document.getElementById('setupPhase').classList.remove('hidden');
-        document.getElementById('optimizationPhase').classList.add('hidden');
-        document.getElementById('convergedAlert').classList.add('hidden');
-        document.getElementById('historyContainer').innerHTML = '';
-        
-        state = {
+    <script>
+        // Global state
+        let state = {
             numDOF: 0,
             dofNames: [],
             dofMins: [],
@@ -986,9 +742,580 @@
             },
             chartsInitialized: false
         };
-    }
-</script>
 
+        // Initialize DOF input fields
+        document.getElementById('numDOF').addEventListener('change', function() {
+            const numDOF = parseInt(this.value);
+            const container = document.getElementById('dofContainer');
+            container.innerHTML = '';
 
+            for (let i = 0; i < numDOF; i++) {
+                const div = document.createElement('div');
+                div.className = 'dof-config';
+                div.innerHTML = `
+                    <div class="dof-header">DOF ${i + 1}</div>
+                    <div class="input-group">
+                        <div>
+                            <label>Name</label>
+                            <input type="text" id="dof_name_${i}" value="Parameter ${i + 1}">
+                        </div>
+                        <div>
+                            <label>Min Value</label>
+                            <input type="number" id="dof_min_${i}" step="any" value="0">
+                        </div>
+                        <div>
+                            <label>Max Value</label>
+                            <input type="number" id="dof_max_${i}" step="any" value="100">
+                        </div>
+                    </div>
+                `;
+                container.appendChild(div);
+            }
+        });
+
+        // Trigger initial load
+        document.getElementById('numDOF').dispatchEvent(new Event('change'));
+
+        // Modal functions
+        function openAlgorithmModal() {
+            document.getElementById('algorithmModal').classList.add('active');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeAlgorithmModal() {
+            document.getElementById('algorithmModal').classList.remove('active');
+            document.body.classList.remove('modal-open');
+        }
+
+        function closeModalOnOverlay(event) {
+            if (event.target === event.currentTarget) {
+                closeAlgorithmModal();
+            }
+        }
+
+        // CSV Download function
+        function downloadCSV() {
+            if (state.observations.length === 0) {
+                alert('No data to export. Please run at least one iteration.');
+                return;
+            }
+
+            // Create CSV header
+            let csv = 'Iteration,';
+            for (let i = 0; i < state.numDOF; i++) {
+                csv += `${state.dofNames[i]},`;
+            }
+            csv += 'Output,Distance from Target,Is Best\n';
+
+            // Add data rows
+            state.observations.forEach((obs, index) => {
+                csv += `${obs.iteration},`;
+                for (let i = 0; i < state.numDOF; i++) {
+                    csv += `${obs.config[i]},`;
+                }
+                const distance = Math.abs(obs.output - state.targetValue);
+                const isBest = (obs.output === state.bestOutput) ? 'Yes' : 'No';
+                csv += `${obs.output},${distance},${isBest}\n`;
+            });
+
+            // Create blob and download
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.setAttribute('href', url);
+            link.setAttribute('download', `optimization_results_${new Date().toISOString().slice(0,10)}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        function initializePlots() {
+            // Convergence Plot - All observations
+            const convergenceTrace = {
+                x: [],
+                y: [],
+                mode: 'lines+markers',
+                name: 'Output',
+                line: { color: '#667eea', width: 2 },
+                marker: { size: 8, color: '#667eea' }
+            };
+
+            const targetTrace = {
+                x: [1],
+                y: [state.targetValue],
+                mode: 'lines',
+                name: 'Target',
+                line: { color: '#ef4444', width: 2, dash: 'dash' }
+            };
+
+            const convergenceLayout = {
+                title: { text: 'Output vs Iteration', font: { size: 16, color: '#1e293b' }},
+                xaxis: { title: 'Iteration', gridcolor: '#e2e8f0' },
+                yaxis: { title: 'Output Value', gridcolor: '#e2e8f0' },
+                plot_bgcolor: '#f8fafc',
+                paper_bgcolor: 'white',
+                margin: { l: 50, r: 30, t: 50, b: 50 },
+                showlegend: true,
+                legend: { x: 1, xanchor: 'right', y: 1 }
+            };
+
+            const config = {
+                responsive: true,
+                displayModeBar: true,
+                modeBarButtonsToRemove: ['lasso2d', 'select2d'],
+                displaylogo: false
+            };
+
+            Plotly.newPlot('convergencePlot', [convergenceTrace, targetTrace], convergenceLayout, config);
+
+            // Distance Plot
+            const distanceTrace = {
+                x: [],
+                y: [],
+                mode: 'lines+markers',
+                name: 'Distance from Target',
+                line: { color: '#f59e0b', width: 2 },
+                marker: { size: 8, color: '#f59e0b' },
+                fill: 'tozeroy',
+                fillcolor: 'rgba(245, 158, 11, 0.2)'
+            };
+
+            const distanceLayout = {
+                title: { text: 'Distance from Target', font: { size: 16, color: '#1e293b' }},
+                xaxis: { title: 'Iteration', gridcolor: '#e2e8f0' },
+                yaxis: { title: 'Absolute Distance', gridcolor: '#e2e8f0' },
+                plot_bgcolor: '#f8fafc',
+                paper_bgcolor: 'white',
+                margin: { l: 50, r: 30, t: 50, b: 50 }
+            };
+
+            Plotly.newPlot('distancePlot', [distanceTrace], distanceLayout, config);
+
+            // Best Evolution Plot
+            const bestTrace = {
+                x: [],
+                y: [],
+                mode: 'lines+markers',
+                name: 'Best Output',
+                line: { color: '#10b981', width: 3 },
+                marker: { size: 10, color: '#10b981', symbol: 'star' }
+            };
+
+            const bestLayout = {
+                title: { text: 'Best Output Evolution', font: { size: 16, color: '#1e293b' }},
+                xaxis: { title: 'Iteration', gridcolor: '#e2e8f0' },
+                yaxis: { title: 'Best Output Value', gridcolor: '#e2e8f0' },
+                plot_bgcolor: '#f8fafc',
+                paper_bgcolor: 'white',
+                margin: { l: 50, r: 30, t: 50, b: 50 }
+            };
+
+            Plotly.newPlot('bestEvolutionPlot', [bestTrace], bestLayout, config);
+            
+            state.chartsInitialized = true;
+        }
+
+        function updatePlots() {
+            if (!state.chartsInitialized) return;
+
+            // Update Convergence Plot - trace 0 is output, trace 1 is target line
+            Plotly.restyle('convergencePlot', {
+                x: [state.chartData.iterations],
+                y: [state.chartData.outputs]
+            }, [0]);
+
+            // Update target line to span the full x-axis
+            if (state.chartData.iterations.length > 0) {
+                const minIter = Math.min(...state.chartData.iterations);
+                const maxIter = Math.max(...state.chartData.iterations);
+                Plotly.restyle('convergencePlot', {
+                    x: [[minIter, maxIter]],
+                    y: [[state.targetValue, state.targetValue]]
+                }, [1]);
+            }
+
+            // Update Distance Plot
+            Plotly.restyle('distancePlot', {
+                x: [state.chartData.iterations],
+                y: [state.chartData.distances]
+            }, [0]);
+
+            // Update Best Evolution Plot
+            Plotly.restyle('bestEvolutionPlot', {
+                x: [state.chartData.iterations],
+                y: [state.chartData.bestValues]
+            }, [0]);
+        }
+
+        function startOptimization() {
+            const numDOF = parseInt(document.getElementById('numDOF').value);
+            state.numDOF = numDOF;
+            state.targetValue = parseFloat(document.getElementById('targetValue').value);
+            state.optimGoal = document.getElementById('optimGoal').value;
+            state.observations = [];
+            state.iteration = 0;
+            state.converged = false;
+            state.bestOutput = null;
+            state.bestConfig = null;
+            state.chartData = {
+                iterations: [],
+                outputs: [],
+                distances: [],
+                bestValues: []
+            };
+
+            // Collect DOF configuration
+            for (let i = 0; i < numDOF; i++) {
+                state.dofNames[i] = document.getElementById(`dof_name_${i}`).value;
+                state.dofMins[i] = parseFloat(document.getElementById(`dof_min_${i}`).value);
+                state.dofMaxs[i] = parseFloat(document.getElementById(`dof_max_${i}`).value);
+                state.dofCurrents[i] = (state.dofMins[i] + state.dofMaxs[i]) / 2;
+            }
+
+            // Switch to optimization phase
+            document.getElementById('setupPhase').classList.add('hidden');
+            document.getElementById('optimizationPhase').classList.remove('hidden');
+            document.getElementById('targetDisplay').textContent = state.targetValue.toFixed(2);
+
+            // Initialize plots
+            initializePlots();
+
+            // Generate initial recommendation
+            generateRecommendation();
+        }
+
+        function generateRecommendation() {
+            if (state.observations.length === 0) {
+                let recText = `<strong>Initial Exploration (Iteration 1)</strong><br><br>`;
+                recText += `Set all DOFs to their midpoint values and measure the output:<br>`;
+                for (let i = 0; i < state.numDOF; i++) {
+                    const midpoint = (state.dofMins[i] + state.dofMaxs[i]) / 2;
+                    state.dofCurrents[i] = midpoint;
+                    recText += `<div class="recommendation-value">📌 ${state.dofNames[i]}: ${midpoint.toFixed(2)}</div>`;
+                }
+                document.getElementById('recommendation').innerHTML = recText;
+            } else if (state.observations.length < state.numDOF + 2) {
+                const config = generateExplorationPoint(state.observations.length);
+                let recText = `<strong>Exploration Phase (Iteration ${state.iteration + 1})</strong><br><br>`;
+                recText += `Try this configuration to explore the parameter space:<br>`;
+                for (let i = 0; i < state.numDOF; i++) {
+                    state.dofCurrents[i] = config[i];
+                    recText += `<div class="recommendation-value">📌 ${state.dofNames[i]}: ${config[i].toFixed(2)}</div>`;
+                }
+                document.getElementById('recommendation').innerHTML = recText;
+            } else {
+                const nextConfig = optimizeAcquisition();
+                let recText = `<strong>Optimization Phase (Iteration ${state.iteration + 1})</strong><br><br>`;
+                
+                let maxChange = 0;
+                let maxChangeDOF = 0;
+                for (let i = 0; i < state.numDOF; i++) {
+                    const change = Math.abs(nextConfig[i] - state.dofCurrents[i]);
+                    if (change > maxChange) {
+                        maxChange = change;
+                        maxChangeDOF = i;
+                    }
+                }
+
+                const direction = nextConfig[maxChangeDOF] > state.dofCurrents[maxChangeDOF] ? 'INCREASE' : 'DECREASE';
+                const changeAmount = Math.abs(nextConfig[maxChangeDOF] - state.dofCurrents[maxChangeDOF]);
+
+                recText += `<strong>Primary Action:</strong> ${direction} <strong>${state.dofNames[maxChangeDOF]}</strong><br>`;
+                recText += `<div class="recommendation-value">🎯 Change from ${state.dofCurrents[maxChangeDOF].toFixed(2)} → ${nextConfig[maxChangeDOF].toFixed(2)} (${direction === 'INCREASE' ? '+' : '-'}${changeAmount.toFixed(2)})</div>`;
+                
+                recText += `<br><strong>All Recommended Settings:</strong><br>`;
+                for (let i = 0; i < state.numDOF; i++) {
+                    state.dofCurrents[i] = nextConfig[i];
+                    const indicator = i === maxChangeDOF ? '🔥 ' : '📌 ';
+                    recText += `<div class="recommendation-value">${indicator}${state.dofNames[i]}: ${nextConfig[i].toFixed(2)}</div>`;
+                }
+
+                document.getElementById('recommendation').innerHTML = recText;
+            }
+        }
+
+        function generateExplorationPoint(index) {
+            const config = [];
+            const seed = index * 2.5;
+            for (let i = 0; i < state.numDOF; i++) {
+                const fraction = ((seed + i * 1.618033988749895) % 1);
+                config[i] = state.dofMins[i] + fraction * (state.dofMaxs[i] - state.dofMins[i]);
+            }
+            return config;
+        }
+
+        function optimizeAcquisition() {
+            const candidates = [];
+            const numCandidates = 100;
+
+            for (let c = 0; c < numCandidates; c++) {
+                const candidate = [];
+                for (let i = 0; i < state.numDOF; i++) {
+                    candidate[i] = state.dofMins[i] + Math.random() * (state.dofMaxs[i] - state.dofMins[i]);
+                }
+                candidates.push(candidate);
+            }
+
+            let bestCandidate = null;
+            let bestEI = -Infinity;
+
+            for (const candidate of candidates) {
+                const [mean, variance] = predictGP(candidate);
+                const ei = expectedImprovement(mean, variance);
+                if (ei > bestEI) {
+                    bestEI = ei;
+                    bestCandidate = candidate;
+                }
+            }
+
+            return bestCandidate || state.dofCurrents;
+        }
+
+        function predictGP(x) {
+            const k = Math.min(5, state.observations.length);
+            const distances = [];
+
+            for (const obs of state.observations) {
+                let dist = 0;
+                for (let i = 0; i < state.numDOF; i++) {
+                    const normalized_diff = (x[i] - obs.config[i]) / (state.dofMaxs[i] - state.dofMins[i]);
+                    dist += normalized_diff * normalized_diff;
+                }
+                distances.push({dist: Math.sqrt(dist), output: obs.output});
+            }
+
+            distances.sort((a, b) => a.dist - b.dist);
+            const kNearest = distances.slice(0, k);
+
+            let weightSum = 0;
+            let mean = 0;
+            const lengthScale = 0.3;
+
+            for (const neighbor of kNearest) {
+                const weight = Math.exp(-neighbor.dist * neighbor.dist / (2 * lengthScale * lengthScale));
+                mean += weight * neighbor.output;
+                weightSum += weight;
+            }
+
+            mean = weightSum > 0 ? mean / weightSum : 0;
+
+            const minDist = distances[0].dist;
+            const variance = Math.max(0.1, minDist * 10);
+
+            return [mean, variance];
+        }
+
+        function expectedImprovement(mean, variance) {
+            if (state.bestOutput === null) return variance;
+
+            const std = Math.sqrt(variance);
+            if (std < 1e-6) return 0;
+
+            let improvement;
+            if (state.optimGoal === 'minimize') {
+                improvement = state.bestOutput - mean;
+            } else if (state.optimGoal === 'maximize') {
+                improvement = mean - state.bestOutput;
+            } else {
+                const currentDist = Math.abs(state.bestOutput - state.targetValue);
+                const predictedDist = Math.abs(mean - state.targetValue);
+                improvement = currentDist - predictedDist;
+            }
+
+            const z = improvement / std;
+            const ei = improvement * normalCDF(z) + std * normalPDF(z);
+            return ei;
+        }
+
+        function normalPDF(x) {
+            return Math.exp(-0.5 * x * x) / Math.sqrt(2 * Math.PI);
+        }
+
+        function normalCDF(x) {
+            return 0.5 * (1 + erf(x / Math.sqrt(2)));
+        }
+
+        function erf(x) {
+            const sign = x >= 0 ? 1 : -1;
+            x = Math.abs(x);
+            const a1 = 0.254829592;
+            const a2 = -0.284496736;
+            const a3 = 1.421413741;
+            const a4 = -1.453152027;
+            const a5 = 1.061405429;
+            const p = 0.3275911;
+            const t = 1.0 / (1.0 + p * x);
+            const y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-x * x);
+            return sign * y;
+        }
+
+        function submitObservation() {
+            const output = parseFloat(document.getElementById('observedOutput').value);
+            if (isNaN(output)) {
+                alert('Please enter a valid output value');
+                return;
+            }
+
+            state.iteration++;
+
+            const observation = {
+                iteration: state.iteration,
+                config: [...state.dofCurrents],
+                output: output
+            };
+            state.observations.push(observation);
+
+            // Update chart data arrays
+            state.chartData.iterations.push(state.iteration);
+            state.chartData.outputs.push(output);
+            state.chartData.distances.push(Math.abs(output - state.targetValue));
+
+            const isBest = updateBest(output);
+            
+            // Update best values array - always push current best
+            state.chartData.bestValues.push(state.bestOutput);
+
+            // Update UI and plots
+            updateProgress();
+            updatePlots();
+            addHistoryItem(observation, isBest);
+
+            document.getElementById('observedOutput').value = '';
+
+            if (checkConvergence()) {
+                state.converged = true;
+                document.getElementById('convergedAlert').classList.remove('hidden');
+                document.getElementById('recommendation').innerHTML = 
+                    `<strong>✅ Optimization Complete!</strong><br><br>The algorithm has converged to the optimal solution.`;
+            } else {
+                generateRecommendation();
+            }
+        }
+
+        function updateBest(output) {
+            let isBest = false;
+            
+            if (state.bestOutput === null) {
+                state.bestOutput = output;
+                state.bestConfig = [...state.dofCurrents];
+                isBest = true;
+            } else {
+                const currentDist = Math.abs(state.bestOutput - state.targetValue);
+                const newDist = Math.abs(output - state.targetValue);
+                
+                if (state.optimGoal === 'minimize' && output < state.bestOutput) {
+                    state.bestOutput = output;
+                    state.bestConfig = [...state.dofCurrents];
+                    isBest = true;
+                } else if (state.optimGoal === 'maximize' && output > state.bestOutput) {
+                    state.bestOutput = output;
+                    state.bestConfig = [...state.dofCurrents];
+                    isBest = true;
+                } else if (state.optimGoal === 'target' && newDist < currentDist) {
+                    state.bestOutput = output;
+                    state.bestConfig = [...state.dofCurrents];
+                    isBest = true;
+                }
+            }
+
+            return isBest;
+        }
+
+        function updateProgress() {
+            document.getElementById('iterationCount').textContent = state.iteration;
+            document.getElementById('bestOutput').textContent = state.bestOutput !== null ? 
+                state.bestOutput.toFixed(2) : '-';
+
+            const distance = state.bestOutput !== null ? 
+                Math.abs(state.bestOutput - state.targetValue) : 0;
+            document.getElementById('distanceMetric').textContent = distance.toFixed(2);
+
+            const maxDistance = Math.max(
+                Math.abs(state.targetValue - Math.min(...state.dofMins)),
+                Math.abs(state.targetValue - Math.max(...state.dofMaxs))
+            );
+            const progress = Math.max(0, Math.min(100, (1 - distance / maxDistance) * 100));
+            
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressBar').textContent = progress.toFixed(0) + '%';
+        }
+
+        function addHistoryItem(obs, isBest) {
+            const container = document.getElementById('historyContainer');
+            const item = document.createElement('div');
+            item.className = 'history-item';
+
+            let configText = '';
+            for (let i = 0; i < state.numDOF; i++) {
+                configText += `<strong>${state.dofNames[i]}:</strong> ${obs.config[i].toFixed(2)}`;
+                if (i < state.numDOF - 1) configText += ' | ';
+            }
+
+            const distance = Math.abs(obs.output - state.targetValue).toFixed(2);
+
+            item.innerHTML = `
+                <div class="history-header">
+                    <span class="badge badge-iteration">Iteration ${obs.iteration}</span>
+                    ${isBest ? '<span class="badge badge-best">🏆 Best</span>' : ''}
+                </div>
+                <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
+                    ${configText}
+                </div>
+                <div style="font-weight: 600;">
+                    Output: ${obs.output.toFixed(2)} | Distance from Target: ${distance}
+                </div>
+            `;
+
+            container.insertBefore(item, container.firstChild);
+        }
+
+        function checkConvergence() {
+            if (state.observations.length < 10) return false;
+
+            const recent = state.observations.slice(-5);
+            const outputs = recent.map(o => Math.abs(o.output - state.targetValue));
+            const improvement = outputs[0] - outputs[outputs.length - 1];
+
+            return Math.abs(improvement) < 0.01 * Math.abs(state.targetValue);
+        }
+
+        function resetOptimization() {
+            document.getElementById('setupPhase').classList.remove('hidden');
+            document.getElementById('optimizationPhase').classList.add('hidden');
+            document.getElementById('convergedAlert').classList.add('hidden');
+            document.getElementById('historyContainer').innerHTML = '';
+            
+            state = {
+                numDOF: 0,
+                dofNames: [],
+                dofMins: [],
+                dofMaxs: [],
+                dofCurrents: [],
+                targetValue: 0,
+                optimGoal: 'target',
+                observations: [],
+                iteration: 0,
+                bestOutput: null,
+                bestConfig: null,
+                converged: false,
+                chartData: {
+                    iterations: [],
+                    outputs: [],
+                    distances: [],
+                    bestValues: []
+                },
+                chartsInitialized: false
+            };
+        }
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeAlgorithmModal();
+            }
+        });
+    </script>
 </body>
 </html>
